@@ -1,5 +1,8 @@
 using Microsoft.EntityFrameworkCore;
+using ProEvento;
 using ProEvento.Data;
+using ProEvento.Interfaces;
+using ProEvento.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,6 +13,14 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+//Repositories
+builder.Services.AddScoped<IEventoRepository, EventoRepository>();
+builder.Services.AddScoped<IPalestranteRepository, PalestranteRepository>();
+
+//IUnitOfWork
+
+builder.Services.AddScoped<IUnitofWork, UnitOfWork>();
 
 var app = builder.Build();
 

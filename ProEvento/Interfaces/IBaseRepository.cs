@@ -1,5 +1,4 @@
 using ProEvento.Data;
-using ProEvento.models;
 
 namespace ProEvento.Interfaces;
 
