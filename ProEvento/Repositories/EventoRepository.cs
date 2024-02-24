@@ -42,41 +42,24 @@ public class EventoRepository : IEventoRepository
         return asNoTracking ? await query.AsNoTracking().ToArrayAsync() : await query.ToArrayAsync();
     }
 
-    public async Task<Evento> GetEventoById(int id, bool inclutePalestrantes, bool asNoTracking)
+    public async Task<Evento?> GetEventoById(int id, bool inclutePalestrantes, bool asNoTracking)
     {
-        var query =  (await GetEventoById([id], inclutePalestrantes, asNoTracking)).FirstOrDefault();
-        
-        return query != default? query : throw new Exception();
+        var registro = await GetEventoById([id], inclutePalestrantes, asNoTracking);
+        return registro?.First();
     }
 
-    public async Task<Evento[]> GetEventoById(int[] ids, bool inclutePalestrantes, bool asNoTracking)
+    public async Task<Evento[]?> GetEventoById(int[] ids, bool inclutePalestrantes, bool asNoTracking)
     {
-        var query = _context.Evento.Where(x => ids.Contains(x.Id)).Include(x => x.RedesSociais);
-        
-        if(inclutePalestrantes)
-                query.Include(x => x.Palestrantes);
-        
-        return asNoTracking? await query.AsNoTracking().ToArrayAsync() : await query.ToArrayAsync();
-    }
+        var query = _context.Evento.Where(x => ids.Contains(x.Id));
 
-    async Task<Evento[]> IEventoRepository.GetAllEventosAsync(bool inclutePalestrantes, bool asNoTracking)
-    {
-        IQueryable<Evento> query = _context.Evento.Include(x => x.RedesSociais);
-        if(inclutePalestrantes)
+        if(query.ToList().Count <= 0)
+        {
+            return null;
+        }
+
+            if (inclutePalestrantes)
             query.Include(x => x.Palestrantes);
 
-            return asNoTracking? await query.AsNoTracking().ToArrayAsync() : await query.ToArrayAsync();
-    }
-
-    async Task<Evento[]> IEventoRepository.GetAllEventosByTemaAsync(string tema, bool inclutePalestrantes, bool asNoTracking)
-    {
-        IQueryable<Evento> query = _context.Evento.Where(x => x.Tema != default && x.Tema.Contains(tema))
-                                                    .OrderBy(x => x.Tema)
-                                                    .Include(x => x.RedesSociais);
-        
-        if(inclutePalestrantes)
-            query.Include(x => x.Palestrantes);
-        
-        return asNoTracking? await query.AsNoTracking().ToArrayAsync() : await query.ToArrayAsync();
+        return asNoTracking ? await query.AsNoTracking().ToArrayAsync() : await query.ToArrayAsync();
     }
 }

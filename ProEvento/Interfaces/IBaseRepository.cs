@@ -6,9 +6,9 @@ public interface IBaseRepository<T> where T : class
 {
     protected AppDbContext _context { get; }
     
-    void Add(T entity)
+    async Task Add(T entity)
     {
-        _context.Set<T>().Add(entity);
+        await _context.Set<T>().AddAsync(entity);
     }
     void Update(T entity)
     {

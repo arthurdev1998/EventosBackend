@@ -1,8 +1,10 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.FileProviders;
 using ProEvento;
 using ProEvento.Data;
 using ProEvento.Interfaces;
 using ProEvento.Repositories;
+using ProEvento.Services.Eventos;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,6 +15,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddControllers();
 
 //Repositories
 builder.Services.AddScoped<IEventoRepository, EventoRepository>();
@@ -21,6 +24,10 @@ builder.Services.AddScoped<IPalestranteRepository, PalestranteRepository>();
 //IUnitOfWork
 
 builder.Services.AddScoped<IUnitofWork, UnitOfWork>();
+
+
+//Injecao dos Services
+builder.Services.AddScoped<EventoService>();
 
 var app = builder.Build();
 
@@ -31,6 +38,13 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+//Criacao do repositorio de imagens
+app.UseStaticFiles(new StaticFileOptions()
+{
+    FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "Imagens")),
+    RequestPath = new PathString("/Imagens")
+});
+
 app.UseHttpsRedirection();
 
 var summaries = new[]
@@ -38,20 +52,7 @@ var summaries = new[]
     "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
 };
 
-app.MapGet("/weatherforecast", () =>
-{
-    var forecast =  Enumerable.Range(1, 5).Select(index =>
-        new WeatherForecast
-        (
-            DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-            Random.Shared.Next(-20, 55),
-            summaries[Random.Shared.Next(summaries.Length)]
-        ))
-        .ToArray();
-    return forecast;
-})
-.WithName("GetWeatherForecast")
-.WithOpenApi();
+app.MapControllers();
 
 app.Run();
 

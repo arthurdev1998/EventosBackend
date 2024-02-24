@@ -16,6 +16,16 @@ public class EventoService
         _unitOfWord = unitofWork;
     }
 
+    public Task<Evento> CreateEvento(Evento evento)
+    {
+        return  ExcepetionHandler.HandleAsync(async () => 
+        {
+              await _eventoRepository.Add(evento);
+              await _unitOfWord.Commit();
+              return evento;
+        });
+    }
+
     public async Task<Evento[]> GetAllAsync()
     {
         return await ExcepetionHandler.HandleAsync(async () =>
@@ -25,6 +35,8 @@ public class EventoService
             return registrosAsync;
         });
     }
+
+
 
     public async Task<Evento[]> GetAllEventosByTemaAsync(string tema, bool inclutePalestrantes = false, bool asNoTracking = false)
     {
