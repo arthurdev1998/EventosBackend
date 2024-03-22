@@ -15,7 +15,7 @@ public class EventoRepository : IEventoRepository
     }
 
     AppDbContext IBaseRepository<Evento>._context => _context;
-
+    
 
     public async Task<Evento[]> GetAllEventosAsync(bool inclutePalestrantes, bool asNoTracking)
     {

@@ -12,6 +12,7 @@ public class UnitOfWork : IUnitofWork
         _context = context;
     }
 
+    // a injecao de dependencia do AspnetCore chamará o método dispose assim que for apropriado
     public void Dispose() => _context.Dispose();
 
 

@@ -18,11 +18,11 @@ public class EventoService
 
     public Task<Evento> CreateEvento(Evento evento)
     {
-        return  ExcepetionHandler.HandleAsync(async () => 
+        return ExcepetionHandler.HandleAsync(async () =>
         {
-              await _eventoRepository.Add(evento);
-              await _unitOfWord.Commit();
-              return evento;
+            await _eventoRepository.Add(evento);
+            var SaveChangesAsync = await _unitOfWord.Commit();
+            return evento;
         });
     }
 
@@ -35,8 +35,6 @@ public class EventoService
             return registrosAsync;
         });
     }
-
-
 
     public async Task<Evento[]> GetAllEventosByTemaAsync(string tema, bool inclutePalestrantes = false, bool asNoTracking = false)
     {

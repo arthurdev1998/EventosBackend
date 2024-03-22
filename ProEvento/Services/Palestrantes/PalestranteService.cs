@@ -18,7 +18,7 @@ public class PalestranteService
     {
         return await ExcepetionHandler.HandleAsync(async () =>
         {
-            var registros = await _palestranteRepository.GetAllPalestrantesAsync();
+            var registros = await _palestranteRepository.GetAllPalestrantesAsync(includeEventos, asNoTracking);
             await _unitofWork.Commit();
             return registros;
         });
